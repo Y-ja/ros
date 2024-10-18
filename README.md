@@ -53,7 +53,7 @@ ROS를 설치하려면 다음 단계를 따르세요:
 
 ## 간단한 예시코드
  ```bash
- #!/usr/bin/env python
+ /usr/bin/env python
  ```
  ``` bash
  import rospy
