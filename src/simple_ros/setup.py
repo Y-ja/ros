@@ -1,4 +1,6 @@
 from setuptools import find_packages, setup
+from glob import glob
+import os
 
 package_name = 'simple_ros'
 
@@ -7,9 +9,9 @@ setup(
     version='0.0.0',
     packages=find_packages(exclude=['test']),
     data_files=[
-        ('share/ament_index/resource_index/packages',
-            ['resource/' + package_name]),
+        ('share/ament_index/resource_index/packages', [f'resource/{package_name}']),
         ('share/' + package_name, ['package.xml']),
+        ('share/' + package_name + '/launch', glob(os.path.join('launch', '*.launch.py')))
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -20,13 +22,11 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            "hello = simple_ros.hello:main",  # main 함수를 호출
-            "hello_class = simple_ros.hello_class:main",  # main 함수를 호출
-            "hello_sub = simple_ros.hello_sub:main",  # main 함수를 호출
-            "hello_pub = simple_ros.hello_pub:main",# main 함수를 호출
-            "time_pub = simple_ros.time_pub:main",# main 함수를 호출
-            
+            'hello = simple_ros.hello:main',
+            'hello_class = simple_ros.hello_class:main',
+            'hello_sub = simple_ros.hello_sub:main',
+            'hello_pub = simple_ros.hello_pub:main',
+            'time_pub = simple_ros.time_pub:main',
         ],
-
     },
 )
