@@ -10,37 +10,51 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)  # ROS 2 C++ client library
 find_package(std_msgs REQUIRED)  # Standard messages for ROS 2
+find_package(geometry_msgs REQUIRED)  # Geometry messages
+find_package(turtlesim REQUIRED)  # Turtlesim package
+find_package(OpenCV REQUIRED)  # OpenCV library
 
 # Include directories
 include_directories(include)  # Add include directory for headers
 
-# Create executable for hello_pub
+# Create executables
 add_executable(hello_pub src/hello_pub.cpp)
-ament_target_dependencies(hello_pub rclcpp std_msgs)  # Link required dependencies
+ament_target_dependencies(hello_pub rclcpp std_msgs)  # Link dependencies for hello_pub
+target_link_libraries(hello_pub ${OpenCV_LIBS})  # Link OpenCV to hello_pub
 
-# Create executable for hello_pub_class
 add_executable(hello_pub_class src/hello_pub_class.cpp src/hello_pub_class_method.cpp)
-ament_target_dependencies(hello_pub_class rclcpp std_msgs)  # Link required dependencies
+ament_target_dependencies(hello_pub_class rclcpp std_msgs)  # Link dependencies for hello_pub_class
+target_link_libraries(hello_pub_class ${OpenCV_LIBS})  # Link OpenCV to hello_pub_class
 
-# Create executable for hello_pub_lambda
 add_executable(hello_pub_lambda src/hello_pub_lambda.cpp)
-ament_target_dependencies(hello_pub_lambda rclcpp std_msgs)  # Link required dependencies
+ament_target_dependencies(hello_pub_lambda rclcpp std_msgs)  # Link dependencies for hello_pub_lambda
+target_link_libraries(hello_pub_lambda ${OpenCV_LIBS})  # Link OpenCV to hello_pub_lambda
 
-# Create executable for hello_sub
-add_executable(hello_sub src/hello_sub.cpp)  # Add hello_sub executable
-ament_target_dependencies(hello_sub rclcpp std_msgs)  # Link required dependencies
+add_executable(hello_sub src/hello_sub.cpp)  # Create hello_sub executable
+ament_target_dependencies(hello_sub rclcpp std_msgs)  # Link dependencies for hello_sub
+target_link_libraries(hello_sub ${OpenCV_LIBS})  # Link OpenCV to hello_sub
+
+add_executable(hello_sub_opencv src/hello_sub_opencv.cpp)  # Create hello_sub_opencv executable
+ament_target_dependencies(hello_sub_opencv rclcpp std_msgs)  # Link dependencies for hello_sub_opencv
+target_link_libraries(hello_sub_opencv ${OpenCV_LIBS})  # Link OpenCV to hello_sub_opencv
+
+add_executable(move_turtle src/move_turtle.cpp)
+ament_target_dependencies(move_turtle rclcpp geometry_msgs turtlesim)  # Correctly link dependencies for move_turtle
+target_link_libraries(move_turtle ${OpenCV_LIBS})  # Link OpenCV if used
 
 # Install the executables
 install(TARGETS
   hello_pub
   hello_pub_class
   hello_pub_lambda
-  hello_sub  # Include hello_sub in the install targets
+  hello_sub
+  hello_sub_opencv
+  move_turtle  # Added move_turtle to installation
   DESTINATION lib/${PROJECT_NAME}  # Install to the library directory of the package
 )
 
 # Install launch directory
-install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})  # Corrected keyword
+install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})  # Install launch files
 
 # Testing and linting
 if(BUILD_TESTING)

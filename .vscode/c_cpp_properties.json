@@ -9,7 +9,9 @@
                 "/opt/ros/humble/include/std_msgs",
                 "/opt/ros/humble/include/rclcpp",
                 "${workspaceFolder}/src",
-                "/opt/ros/humble/include/rosidl_runtime_cpp"
+                "/opt/ros/humble/include/rosidl_runtime_cpp",
+                "/opt/ros/humble/include/rosidl_runtime_c",
+                "/opt/ros/humble/include/geometry_msgs"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
