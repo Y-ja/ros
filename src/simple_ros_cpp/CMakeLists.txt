@@ -1,68 +1,85 @@
 cmake_minimum_required(VERSION 3.8)
 project(simple_ros_cpp)
 
-# Compiler warnings
+# C++ 컴파일러에 대한 경고 옵션 설정
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic)  # Enable all warnings
+  add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-# Find required packages
+# 의존성 찾기
 find_package(ament_cmake REQUIRED)
-find_package(rclcpp REQUIRED)  # ROS 2 C++ client library
-find_package(std_msgs REQUIRED)  # Standard messages for ROS 2
-find_package(geometry_msgs REQUIRED)  # Geometry messages
-find_package(turtlesim REQUIRED)  # Turtlesim package
-find_package(OpenCV REQUIRED)  # OpenCV library
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)  # std_msgs 의존성 추가
+find_package(OpenCV REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(turtlesim REQUIRED)
+find_package(std_srvs REQUIRED)
+find_package(user_interface REQUIRED)
 
-# Include directories
-include_directories(include)  # Add include directory for headers
+# include 디렉토리 설정
+include_directories(include)
 
-# Create executables
+# hello_pub 실행 파일 추가 및 의존성 설정
 add_executable(hello_pub src/hello_pub.cpp)
-ament_target_dependencies(hello_pub rclcpp std_msgs)  # Link dependencies for hello_pub
-target_link_libraries(hello_pub ${OpenCV_LIBS})  # Link OpenCV to hello_pub
+ament_target_dependencies(hello_pub rclcpp std_msgs)
 
+# hello_pub_class 실행 파일 추가 및 의존성 설정
 add_executable(hello_pub_class src/hello_pub_class.cpp src/hello_pub_class_method.cpp)
-ament_target_dependencies(hello_pub_class rclcpp std_msgs)  # Link dependencies for hello_pub_class
-target_link_libraries(hello_pub_class ${OpenCV_LIBS})  # Link OpenCV to hello_pub_class
+ament_target_dependencies(hello_pub_class rclcpp std_msgs)
 
+# hello_pub_lambda 실행 파일 추가 및 의존성 설정
 add_executable(hello_pub_lambda src/hello_pub_lambda.cpp)
-ament_target_dependencies(hello_pub_lambda rclcpp std_msgs)  # Link dependencies for hello_pub_lambda
-target_link_libraries(hello_pub_lambda ${OpenCV_LIBS})  # Link OpenCV to hello_pub_lambda
+ament_target_dependencies(hello_pub_lambda rclcpp std_msgs)
 
-add_executable(hello_sub src/hello_sub.cpp)  # Create hello_sub executable
-ament_target_dependencies(hello_sub rclcpp std_msgs)  # Link dependencies for hello_sub
-target_link_libraries(hello_sub ${OpenCV_LIBS})  # Link OpenCV to hello_sub
+# hello_sub 실행 파일 추가 및 의존성 설정
+add_executable(hello_sub src/hello_sub.cpp)
+ament_target_dependencies(hello_sub rclcpp std_msgs)
 
-add_executable(hello_sub_opencv src/hello_sub_opencv.cpp)  # Create hello_sub_opencv executable
-ament_target_dependencies(hello_sub_opencv rclcpp std_msgs)  # Link dependencies for hello_sub_opencv
-target_link_libraries(hello_sub_opencv ${OpenCV_LIBS})  # Link OpenCV to hello_sub_opencv
+# hello_sub_opencv 실행 파일 추가 및 OpenCV 의존성 설정
+add_executable(hello_sub_opencv src/hello_sub_opencv.cpp)
+target_link_libraries(hello_sub_opencv ${OpenCV_LIBS})
+target_link_directories(hello_sub_opencv PUBLIC ${OpenCV_LIB_DIR})
+ament_target_dependencies(hello_sub_opencv rclcpp std_msgs)
 
+# move_turtle 실행 파일 추가 및 의존성 설정
 add_executable(move_turtle src/move_turtle.cpp)
-ament_target_dependencies(move_turtle rclcpp geometry_msgs turtlesim)  # Correctly link dependencies for move_turtle
-target_link_libraries(move_turtle ${OpenCV_LIBS})  # Link OpenCV if used
+ament_target_dependencies(move_turtle rclcpp geometry_msgs turtlesim)
 
-# Install the executables
+# service_server 실행 파일 추가 및 의존성 설정
+add_executable(service_server src/service_server.cpp)
+ament_target_dependencies(service_server rclcpp std_srvs)
+
+# service_client 실행 파일 추가 및 의존성 설정
+add_executable(service_client src/service_client.cpp)
+ament_target_dependencies(service_client rclcpp std_srvs)
+
+# service_client_int 실행 파일 추가 및 의존성 설정
+add_executable(service_client_int src/service_client_int.cpp)
+ament_target_dependencies(service_client_int rclcpp user_interface)
+
+# 설치할 타겟 설정
 install(TARGETS
   hello_pub
-  hello_pub_class
   hello_pub_lambda
+  hello_pub_class
   hello_sub
   hello_sub_opencv
-  move_turtle  # Added move_turtle to installation
-  DESTINATION lib/${PROJECT_NAME}  # Install to the library directory of the package
-)
+  move_turtle
+  service_server
+  service_client
+  service_client_int
+  DESTINATION lib/${PROJECT_NAME})
 
-# Install launch directory
-install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})  # Install launch files
+# launch 디렉토리 설치
+install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})
 
-# Testing and linting
+# 테스트 빌드 설정
 if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)  # Find linting tools
-  set(ament_cmake_copyright_FOUND TRUE)  # Enable copyright checking
-  set(ament_cmake_cpplint_FOUND TRUE)  # Enable cpplint checking
-  ament_lint_auto_find_test_dependencies()  # Find test dependencies automatically
+  find_package(ament_lint_auto REQUIRED)
+  set(ament_cmake_copyright_FOUND TRUE)  # 저작권 확인 건너뛰기
+  set(ament_cmake_cpplint_FOUND TRUE)    # cpplint 건너뛰기
+  ament_lint_auto_find_test_dependencies()
 endif()
 
-# Package the project
-ament_package()  # Finalize the package
+# 패키지 정의
+ament_package()

@@ -12,7 +12,7 @@ from std_srvs.srv import SetBool
 
 class ServiceServer(Node):
     def __init__(self):
-        super().__init__("hello_pub")
+        super().__init__("ServiceServer")
         # QoS 프로파일 설정
         self.qos_profile = QoSProfile(
             history=QoSHistoryPolicy.KEEP_ALL,

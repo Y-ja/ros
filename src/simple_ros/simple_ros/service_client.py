@@ -11,7 +11,7 @@ from std_srvs.srv import SetBool
 
 class ServiceClient(Node):
     def __init__(self):
-        super().__init__("hello_pub")
+        super().__init__("service_client")  # 노드 이름을 service_client로 변경
         # QoS 프로파일 설정
         self.qos_profile = QoSProfile(
             history=QoSHistoryPolicy.KEEP_ALL,
@@ -31,8 +31,8 @@ class ServiceClient(Node):
 
         self.bool = False  # 초기값 설정
         
-        # 타이머 설정 (5초마다 요청)
-        self.create_timer(0.1 , self.timer_callback)
+        # 타이머 설정 (3초마다 요청)
+        self.create_timer(3.0, self.timer_callback)
 
     def timer_callback(self):
         # 예시로 True를 전달하여 요청
