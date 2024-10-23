@@ -13,7 +13,8 @@
                 "/opt/ros/humble/include/rosidl_runtime_c",
                 "/opt/ros/humble/include/geometry_msgs",
                 "/opt/ros/humble/include/std_srvs",
-                "/home/test/Desktop/Ros2/ros2/ros/install/**"
+                "/home/test/Desktop/Ros2/ros2/ros/install/**",
+                "/opt/ros/humble/include/rcl_interfaces"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

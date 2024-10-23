@@ -11,7 +11,8 @@ setup(
     data_files=[
         ('share/ament_index/resource_index/packages', [f'resource/{package_name}']),
         ('share/' + package_name, ['package.xml']),
-        ('share/' + package_name + '/launch', glob(os.path.join('launch', '*.launch.py')))
+        ('share/' + package_name + '/launch', glob(os.path.join('launch', '*.launch.py'))),
+        ('share/' + package_name + '/param', glob(os.path.join('param', '*.yaml')))
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -29,11 +30,14 @@ setup(
             'time_pub = simple_ros.time_pub:main',
             'move_turtle = simple_ros.move_turtle:main',
             'move_turtle_time = simple_ros.move_turtle_time:main',
+            'move_turtle_ns = simple_ros.move_turtle_ns:main',
+            'move_turtle_time_ns = simple_ros.move_turtle_time_ns:main',
             "service_server = simple_ros.service_server:main",
             "service_client = simple_ros.service_client:main",
             "user_int_pub = simple_ros.user_int_pub:main",
             "service_sever_int = simple_ros.service_sever_int:main",
             "simple_parameter = simple_ros.simple_parameter:main",
+            "simple_parameter_node = simple_ros.simple_parameter_node:main",
         ],
     },
 )

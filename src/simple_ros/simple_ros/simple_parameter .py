@@ -33,4 +33,4 @@ def main():
         rclpy.shutdown()  # ROS 2 종료
 
 if __name__ == "__main__":
-    main()
+    main() 
