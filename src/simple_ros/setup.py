@@ -33,6 +33,7 @@ setup(
             "service_client = simple_ros.service_client:main",
             "user_int_pub = simple_ros.user_int_pub:main",
             "service_sever_int = simple_ros.service_sever_int:main",
+            "simple_parameter = simple_ros.simple_parameter:main",
         ],
     },
 )

@@ -19,41 +19,33 @@ find_package(user_interface REQUIRED)
 # include 디렉토리 설정
 include_directories(include)
 
-# hello_pub 실행 파일 추가 및 의존성 설정
+# 실행 파일 및 의존성 설정
 add_executable(hello_pub src/hello_pub.cpp)
 ament_target_dependencies(hello_pub rclcpp std_msgs)
 
-# hello_pub_class 실행 파일 추가 및 의존성 설정
 add_executable(hello_pub_class src/hello_pub_class.cpp src/hello_pub_class_method.cpp)
 ament_target_dependencies(hello_pub_class rclcpp std_msgs)
 
-# hello_pub_lambda 실행 파일 추가 및 의존성 설정
 add_executable(hello_pub_lambda src/hello_pub_lambda.cpp)
 ament_target_dependencies(hello_pub_lambda rclcpp std_msgs)
 
-# hello_sub 실행 파일 추가 및 의존성 설정
 add_executable(hello_sub src/hello_sub.cpp)
 ament_target_dependencies(hello_sub rclcpp std_msgs)
 
-# hello_sub_opencv 실행 파일 추가 및 OpenCV 의존성 설정
 add_executable(hello_sub_opencv src/hello_sub_opencv.cpp)
 target_link_libraries(hello_sub_opencv ${OpenCV_LIBS})
 target_link_directories(hello_sub_opencv PUBLIC ${OpenCV_LIB_DIR})
 ament_target_dependencies(hello_sub_opencv rclcpp std_msgs)
 
-# move_turtle 실행 파일 추가 및 의존성 설정
 add_executable(move_turtle src/move_turtle.cpp)
 ament_target_dependencies(move_turtle rclcpp geometry_msgs turtlesim)
 
-# service_server 실행 파일 추가 및 의존성 설정
 add_executable(service_server src/service_server.cpp)
 ament_target_dependencies(service_server rclcpp std_srvs)
 
-# service_client 실행 파일 추가 및 의존성 설정
 add_executable(service_client src/service_client.cpp)
 ament_target_dependencies(service_client rclcpp std_srvs)
 
-# service_client_int 실행 파일 추가 및 의존성 설정
 add_executable(service_client_int src/service_client_int.cpp)
 ament_target_dependencies(service_client_int rclcpp user_interface)
 
