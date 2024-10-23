@@ -38,6 +38,9 @@ setup(
             "service_sever_int = simple_ros.service_sever_int:main",
             "simple_parameter = simple_ros.simple_parameter:main",
             "simple_parameter_node = simple_ros.simple_parameter_node:main",
+            "simple_parameter_node2 = simple_ros.simple_parameter_node2:main",
+            "action_server = simple_ros.action_server:main",
+            "action_client = simple_ros.action_client:main"
         ],
     },
 )
