@@ -1,102 +1,70 @@
-#include <rclcpp/rclcpp.hpp>
-#include <geometry_msgs/msg/twist.hpp>
-#include <turtlesim/msg/pose.hpp>
+#include "geometry_msgs/msg/twist.hpp"
+#include "rclcpp/rclcpp.hpp"
+#include "turtlesim/msg/color.hpp"
+#include "turtlesim/msg/pose.hpp"
+#include <chrono>
+#include <iostream>
+
+using namespace std;
+using namespace std::chrono_literals;
 
 class MoveTurtle : public rclcpp::Node
 {
 public:
     MoveTurtle()
-        : Node("move_turtle"),
-          state_(State::FORWARD), // Initialize state first
-          linear_velocity_(0.5),   // Set linear velocity for faster movement
-          angular_velocity_(1.0),   // Set angular velocity for quicker turns
-          max_velocity_(1.0),
-          distance_moved_(0.0),
-          turn_angle_(0.0)
+        : Node("hello_sub")
     {
-        // Create publisher with KeepLast QoS policy
-        pub_ = this->create_publisher<geometry_msgs::msg::Twist>(
-            "turtle1/cmd_vel", 
-            rclcpp::QoS(rclcpp::KeepLast(10)).reliable());
-
-        // Create subscription with KeepLast QoS policy
-        sub_pose_ = this->create_subscription<turtlesim::msg::Pose>(
+        auto qos_profile = rclcpp::QoS(rclcpp::KeepLast(10))
+                               .reliability(RMW_QOS_POLICY_RELIABILITY_RELIABLE)
+                               .durability(RMW_QOS_POLICY_DURABILITY_VOLATILE);
+        _pose_sub = create_subscription<turtlesim::msg::Pose>(
             "turtle1/pose",
-            rclcpp::QoS(rclcpp::KeepLast(10)).reliable(),
-            std::bind(&MoveTurtle::pose_callback, this, std::placeholders::_1));
-
-        // Create timer
-        timer_ = this->create_wall_timer(
-            std::chrono::milliseconds(100),
-            std::bind(&MoveTurtle::move_turtle, this));
-
-        RCLCPP_INFO(this->get_logger(), "Starting to move in a square pattern.");
+            qos_profile,
+            std::bind(&MoveTurtle::pose_sub_callback, this, std::placeholders::_1));
+        _color_sub = create_subscription<turtlesim::msg::Color>(
+            "turtle1/color",
+            qos_profile,
+            std::bind(&MoveTurtle::color_sub_callback, this, std::placeholders::_1));
+        _pub = create_publisher<geometry_msgs::msg::Twist>("turtle1/cmd_vel", qos_profile);
+        _twist_pub_timer = create_wall_timer(100ms, std::bind(&MoveTurtle::twist_pub, this));
+        // _update_timer = create_wall_timer(std::chrono::milliseconds(17),...)
+        _update_timer = create_wall_timer(17ms, std::bind(&MoveTurtle::update, this));
     }
 
 private:
-    enum class State { FORWARD, TURN };
-    
-    State state_;          // Declare state first
-    double linear_velocity_;
-    double angular_velocity_;
-    double max_velocity_;
-    double distance_moved_;
-    double turn_angle_;
-    
-    void move_turtle()
+    int _count;
+    turtlesim::msg::Pose _pose;
+    turtlesim::msg::Color _color;
+    geometry_msgs::msg::Twist _twist;
+    rclcpp::Subscription<turtlesim::msg::Pose>::SharedPtr _pose_sub;
+    rclcpp::Subscription<turtlesim::msg::Color>::SharedPtr _color_sub;
+    rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr _pub;
+    rclcpp::TimerBase::SharedPtr _twist_pub_timer;
+    rclcpp::TimerBase::SharedPtr _update_timer;
+    void pose_sub_callback(const turtlesim::msg::Pose::SharedPtr msg)
     {
-        auto twist = geometry_msgs::msg::Twist();
-        
-        switch (state_)
-        {
-            case State::FORWARD:
-                // Move forward
-                twist.linear.x = linear_velocity_;
-                twist.angular.z = 0.0;
-                distance_moved_ += linear_velocity_ * 0.1;  // Assuming timer runs every 100 ms
-
-                if (distance_moved_ >= 2.0)  // Move forward 2 meters
-                {
-                    state_ = State::TURN;
-                    distance_moved_ = 0.0; // Reset distance
-                    RCLCPP_INFO(this->get_logger(), "Reached corner, turning 90 degrees.");
-                }
-                break;
-
-            case State::TURN:
-                // Turn 90 degrees
-                twist.linear.x = 0.0;
-                twist.angular.z = angular_velocity_;
-
-                turn_angle_ += angular_velocity_ * 0.1;  // Update turn angle
-
-                if (turn_angle_ >= M_PI / 2)  // 90 degrees in radians
-                {
-                    state_ = State::FORWARD; // Go back to moving forward
-                    turn_angle_ = 0.0; // Reset turn angle
-                    RCLCPP_INFO(this->get_logger(), "Finished turning, moving forward.");
-                }
-                break;
-        }
-
-        // Publish the twist message
-        pub_->publish(twist);
+        _pose = *msg;
     }
-
-    void pose_callback(const turtlesim::msg::Pose::SharedPtr msg)
+    void color_sub_callback(const turtlesim::msg::Color::SharedPtr msg)
     {
-        RCLCPP_INFO(this->get_logger(), "Received Pose: x=%.2f, y=%.2f, theta=%.2f", msg->x, msg->y, msg->theta);
+        _color = *msg;
     }
-
-    rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr pub_;
-    rclcpp::Subscription<turtlesim::msg::Pose>::SharedPtr sub_pose_;
-    rclcpp::TimerBase::SharedPtr timer_;
+    void twist_pub()
+    {
+        _pub->publish(_twist);
+    }
+    void update()
+    {
+        _twist.linear.x += 0.006;
+        _twist.angular.z = 1.0;
+    }
 };
 
-int main(int argc, char **argv)
+int main()
 {
-    rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<MoveTurtle>());
+    rclcpp::init(0, nullptr);
+    auto node = std::make_shared<MoveTurtle>();
+    rclcpp::spin(node);
     rclcpp::shutdown();
     return 0;
 }

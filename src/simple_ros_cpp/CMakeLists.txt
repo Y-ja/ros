@@ -1,27 +1,25 @@
 cmake_minimum_required(VERSION 3.8)
 project(simple_ros_cpp)
 
-# C++ 컴파일러에 대한 경고 옵션 설정
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-# 의존성 찾기
+# find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(std_msgs REQUIRED)  # std_msgs 의존성 추가
+find_package(std_msgs REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(turtlesim REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(user_interface REQUIRED)
 
-# include 디렉토리 설정
+# include directories
 include_directories(include)
 
-# 실행 파일 및 의존성 설정
 add_executable(hello_pub src/hello_pub.cpp)
-ament_target_dependencies(hello_pub rclcpp std_msgs)
+ament_target_dependencies(hello_pub rclcpp)
 
 add_executable(hello_pub_class src/hello_pub_class.cpp src/hello_pub_class_method.cpp)
 ament_target_dependencies(hello_pub_class rclcpp std_msgs)
@@ -49,7 +47,6 @@ ament_target_dependencies(service_client rclcpp std_srvs)
 add_executable(service_client_int src/service_client_int.cpp)
 ament_target_dependencies(service_client_int rclcpp user_interface)
 
-# 설치할 타겟 설정
 install(TARGETS
   hello_pub
   hello_pub_lambda
@@ -62,16 +59,13 @@ install(TARGETS
   service_client_int
   DESTINATION lib/${PROJECT_NAME})
 
-# launch 디렉토리 설치
 install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})
 
-# 테스트 빌드 설정
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
-  set(ament_cmake_copyright_FOUND TRUE)  # 저작권 확인 건너뛰기
-  set(ament_cmake_cpplint_FOUND TRUE)    # cpplint 건너뛰기
+  set(ament_cmake_copyright_FOUND TRUE)
+  set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-# 패키지 정의
 ament_package()
