@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 3.8)
 project(simple_ros_cpp)
 
+# Compiler options
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-# find dependencies
+# Find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -15,10 +16,12 @@ find_package(turtlesim REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(user_interface REQUIRED)
 find_package(rcl_interfaces REQUIRED)
+find_package(rclcpp_action REQUIRED)
 
-# include directories
+# Include directories
 include_directories(include)
 
+# Add executables
 add_executable(hello_pub src/hello_pub.cpp)
 ament_target_dependencies(hello_pub rclcpp)
 
@@ -48,10 +51,13 @@ ament_target_dependencies(service_client rclcpp std_srvs)
 add_executable(service_client_int src/service_client_int.cpp)
 ament_target_dependencies(service_client_int rclcpp user_interface)
 
-# Add simple_parameter executable
 add_executable(simple_parameter src/simple_parameter.cpp)
-ament_target_dependencies(simple_parameter rclcpp std_msgs)  # Add any other dependencies if needed
+ament_target_dependencies(simple_parameter rclcpp rcl_interfaces)
 
+add_executable(action_server src/action_server.cpp)
+ament_target_dependencies(action_server rclcpp user_interface rclcpp_action)
+
+# Install targets
 install(TARGETS
   hello_pub
   hello_pub_lambda
@@ -62,11 +68,14 @@ install(TARGETS
   service_server
   service_client
   service_client_int
-  simple_parameter  # Add the new target here
+  simple_parameter
+  action_server
   DESTINATION lib/${PROJECT_NAME})
 
+# Install launch files
 install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})
 
+# Testing
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   set(ament_cmake_copyright_FOUND TRUE)
