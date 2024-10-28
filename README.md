@@ -76,3 +76,159 @@ if __name__ == '__main__':
         pass
 
  ``` 
+
+
+# ROS2 실습 정리 📚
+
+## 1부: ROS2 CLI 실습 🚀
+### 명령어 실습
+- **`ros2 run`**
+  - **설명**: 지정된 패키지의 노드를 실행합니다.
+  - **예시**: 
+    ```bash
+    ros2 run my_package my_node
+    ```
+
+- **`ros2 launch`**
+  - **설명**: 여러 노드를 동시에 실행하는 런치 파일을 실행합니다.
+  - **예시**:
+    ```bash
+    ros2 launch my_package my_launch_file.launch.py
+    ```
+
+- **`ros2 topic`**
+  - **설명**: 토픽을 관리합니다. 생성, 삭제, 메시지 확인 등이 가능합니다.
+  - **예시**:
+    ```bash
+    ros2 topic list
+    ```
+
+- **`ros2 node`**
+  - **설명**: 현재 실행 중인 노드의 정보를 확인합니다.
+  - **예시**:
+    ```bash
+    ros2 node list
+    ```
+
+- **`ros2 param`**
+  - **설명**: 노드의 파라미터를 설정하고 조회합니다.
+  - **예시**:
+    ```bash
+    ros2 param list
+    ```
+
+- **`ros2 service`**
+  - **설명**: 서비스를 호출하거나 확인합니다.
+  - **예시**:
+    ```bash
+    ros2 service call /my_service std_srvs/srv/Empty
+    ```
+
+- **`ros2 action`**
+  - **설명**: 액션 서버와 클라이언트를 관리합니다.
+  - **예시**:
+    ```bash
+    ros2 action list
+    ```
+
+## 2부: ROS2 RQT 실습 📊
+### RQT 도구 활용
+- **`rqt_graph`**
+  - **설명**: ROS 시스템의 노드 및 토픽 관계를 시각화합니다.
+  - **예시**:
+    ```bash
+    rqt_graph
+    ```
+
+- **`rqt_plot`**
+  - **설명**: 실시간 데이터를 그래프로 시각화합니다.
+  - **예시**:
+    ```bash
+    rqt_plot /my_topic/data
+    ```
+
+- **`rqt_image_view`**
+  - **설명**: 이미지 토픽을 시각화하여 확인합니다.
+  - **예시**:
+    ```bash
+    rqt_image_view
+    ```
+
+- **`rqt_console`**
+  - **설명**: ROS 로그 메시지를 필터링하고 확인합니다.
+  - **예시**:
+    ```bash
+    rqt_console
+    ```
+
+- **`rqt_logger_level`**
+  - **설명**: 노드의 로깅 레벨을 설정합니다.
+  - **예시**:
+    ```bash
+    rqt_logger_level
+    ```
+
+## 3부: 패키지 및 노드 작성 🛠️
+### 패키지 생성
+- **`ros2 pkg create`**
+  - **설명**: 새로운 ROS2 패키지를 생성합니다.
+  - **예시**:
+    ```bash
+    ros2 pkg create my_new_package
+    ```
+
+### 2024_10_18
+- **기본 노드 코드 작성**
+  - **예시**: 간단한 퍼블리셔 노드
+    ```python
+    import rclpy
+    from rclpy.node import Node
+    from std_msgs.msg import String
+
+    class MyPublisher(Node):
+        def __init__(self):
+            super().__init__('my_publisher')
+            self.publisher_ = self.create_publisher(String, 'my_topic', 10)
+            self.timer = self.create_timer(1.0, self.timer_callback)
+
+        def timer_callback(self):
+            msg = String()
+            msg.data = 'Hello, ROS2!'
+            self.publisher_.publish(msg)
+
+    def main(args=None):
+        rclpy.init(args=args)
+        node = MyPublisher()
+        rclpy.spin(node)
+        rclpy.shutdown()
+
+    if __name__ == '__main__':
+        main()
+    ```
+
+### 2024_10_21
+- **C++ 패키지 생성**
+  - **설명**: C++로 ROS2 패키지를 생성하고 CMake 설정을 작성합니다.
+  - **예시**:
+    ```bash
+    ros2 pkg create simple_ros_cpp --build-type ament_cmake
+    ```
+
+- **CMakeLists.txt**:
+  ```cmake
+  cmake_minimum_required(VERSION 3.5)
+  project(simple_ros_cpp)
+
+  find_package(ament_cmake REQUIRED)
+  find_package(rclcpp REQUIRED)
+
+  add_executable(my_cpp_publisher src/my_cpp_publisher.cpp)
+  ament_target_dependencies(my_cpp_publisher rclcpp)
+
+  install(TARGETS
+    my_cpp_publisher
+    DESTINATION lib/${PROJECT_NAME}
+  )
+
+  ament_package()
+```
