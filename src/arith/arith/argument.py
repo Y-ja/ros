@@ -30,8 +30,8 @@ class Argument(Node):
         msg.stamp = self.get_clock().now().to_msg()
         msg.argument_a = float(random.randint(self.min, self.max))
         msg.argument_b = float(random.randint(self.min, self.max))
-        self.get_logger().info(f"Argument A -> {msg.argument_a}")
-        self.get_logger().info(f"Argument B -> {msg.argument_b}")
+        self.get_logger().warn(f"Argument A -> {msg.argument_a}")
+        self.get_logger().warn(f"Argument B -> {msg.argument_b}")
         self.pub_o.publish(msg)
             
 def main():

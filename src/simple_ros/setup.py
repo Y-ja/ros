@@ -41,7 +41,8 @@ setup(
             "simple_parameter_node = simple_ros.simple_parameter_node:main",
             "simple_parameter_node2 = simple_ros.simple_parameter_node2:main",
             "action_server = simple_ros.action_server:main",
-            "action_client = simple_ros.action_client:main"
+            "action_client = simple_ros.action_client:main",
+            "logging_example = simple_ros.logging_example:main",
         ],
     },
 )

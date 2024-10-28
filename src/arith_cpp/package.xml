@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>atith_cpp</name>
+  <name>arith_cpp</name>
   <version>0.0.0</version>
-  <description>Arithmetic final demo</description>
-  <maintainer email="ghkdwo34@naver.com">Won_JAE</maintainer>
+  <description>arithmetic final demo cpp</description>
+  <maintainer email="freshmea@naver.com">freshmea</maintainer>
   <license>Apache License 2.0</license>
 
   <depend>rclcpp</depend>
   <depend>rclcpp_action</depend>
-  <depend>msg_srv_action_interface_example</depend>
-
+  <depend>user_interface</depend>
+  
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <test_depend>ament_lint_auto</test_depend>
