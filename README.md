@@ -232,3 +232,120 @@ if __name__ == '__main__':
 
   ament_package()
 ```
+
+
+
+# ROS2 실습 정리 📚
+
+## 2024_10_22
+### 서비스 작성
+- **예시**: 간단한 서비스 서버
+```python
+from example_interfaces.srv import AddTwoInts
+import rclpy
+from rclpy.node import Node
+
+class AddTwoIntsServer(Node):
+    def __init__(self):
+        super().__init__('add_two_ints_server')
+        self.srv = self.create_service(AddTwoInts, 'add_two_ints', self.add_callback)
+
+    def add_callback(self, request, response):
+        response.sum = request.a + request.b
+        return response
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = AddTwoIntsServer()
+    rclpy.spin(node)
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+## 2024_10_23
+### 파라미터 적용 노드 작성
+- 예시: 파라미터를 사용하는 노드
+
+```python
+class MyParameterNode(Node):
+    def __init__(self):
+        super().__init__('my_parameter_node')
+        self.declare_parameter('my_param', 'default_value')
+        param_value = self.get_parameter('my_param').value
+        self.get_logger().info(f'Parameter value: {param_value}')
+
+```
+
+## 2024_10_28
+### 심화 프로그래밍: 로깅 📝
+- 설명: 로깅 환경 변수를 설정하고 노드를 작성합니다.
+```python
+import rclpy
+from rclpy.node import Node
+
+class MyLoggingNode(Node):
+    def __init__(self):
+        super().__init__('my_logging_node')
+        self.get_logger().info('This is an info message.')
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = MyLoggingNode()
+    rclpy.spin(node)
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+
+```
+
+
+
+
+### 터틀봇3 설명 🤖
+
+터틀봇3는 ROS2(로봇 운영 체제 2) 기반의 로봇 플랫폼으로, 로봇 연구 및 교육에 적합한 다양한 기능을 제공합니다. 이 로봇은 자율 주행, 물체 인식, 매핑 및 탐색 등의 기능을 수행할 수 있습니다. 터틀봇3는 특히 저렴하고 유연성이 뛰어나기 때문에 로봇 개발자와 연구자에게 인기 있는 선택입니다.
+
+#### 특징 🌟
+- **모듈화된 디자인**: 부품이 쉽게 교체 가능하여 사용자 맞춤형 로봇 제작이 가능합니다.
+- **고성능 센서**: LiDAR, 카메라, IMU 센서 등을 통해 환경 인식 및 매핑 기능을 지원합니다.
+- **ROS2 지원**: ROS2를 통해 강력한 소프트웨어 생태계를 활용할 수 있습니다.
+- **교육용 플랫폼**: 로봇 공학 및 AI 교육에 적합하여 많은 교육기관에서 사용되고 있습니다.
+
+#### 데이터 계통 및 전력 계통 ⚡
+- **데이터 계통**: 터틀봇3는 센서와 모터 간의 데이터 통신을 위한 여러 인터페이스(예: UART, I2C, SPI)를 지원합니다.
+- **전력 계통**: 배터리를 사용하며, 배터리 잔량 모니터링 기능이 포함되어 있습니다. 전원 관리가 효율적입니다.
+
+#### 예시 코드 📝
+터틀봇3의 기본 동작을 보여주는 예시 코드입니다. 아래 코드는 ROS2를 사용하여 터틀봇3를 전진시키는 간단한 Publisher 노드를 작성한 것입니다.
+
+```python
+import rclpy
+from rclpy.node import Node
+from geometry_msgs.msg import Twist
+
+class Turtlebot3Move(Node):
+    def __init__(self):
+        super().__init__('turtlebot3_move')
+        self.publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)
+        self.timer = self.create_timer(1.0, self.timer_callback)
+
+    def timer_callback(self):
+        msg = Twist()
+        msg.linear.x = 0.2  # 전진 속도
+        msg.angular.z = 0.0  # 회전 속도
+        self.publisher_.publish(msg)
+        self.get_logger().info('Publishing: linear.x: %f, angular.z: %f' % (msg.linear.x, msg.angular.z))
+
+def main(args=None):
+    rclpy.init(args=args)
+    turtlebot3_move = Turtlebot3Move()
+    rclpy.spin(turtlebot3_move)
+    turtlebot3_move.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
