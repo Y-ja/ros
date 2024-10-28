@@ -27,6 +27,7 @@ setup(
             'argument = arith.argument:main',
             'calculator = arith.calculator:main',
             'operarot = arith.operarot:main',
+            'checker = arith.checker:main',
             
         ],
     },
