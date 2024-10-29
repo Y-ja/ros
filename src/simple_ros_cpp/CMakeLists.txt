@@ -10,13 +10,14 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
-find_package(OpenCV REQUIRED)
+find_package(OpenCV REQUIRED COMPONENTS core highgui imgproc videoio)
 find_package(geometry_msgs REQUIRED)
 find_package(turtlesim REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(user_interface REQUIRED)
 find_package(rcl_interfaces REQUIRED)
 find_package(rclcpp_action REQUIRED)
+find_package(sensor_msgs REQUIRED)  # sensor_msgs 추가
 
 # Include directories
 include_directories(include)
@@ -36,7 +37,6 @@ ament_target_dependencies(hello_sub rclcpp std_msgs)
 
 add_executable(hello_sub_opencv src/hello_sub_opencv.cpp)
 target_link_libraries(hello_sub_opencv ${OpenCV_LIBS})
-target_link_directories(hello_sub_opencv PUBLIC ${OpenCV_LIB_DIR})
 ament_target_dependencies(hello_sub_opencv rclcpp std_msgs)
 
 add_executable(move_turtle src/move_turtle.cpp)
@@ -63,6 +63,16 @@ ament_target_dependencies(action_client rclcpp user_interface rclcpp_action)
 add_executable(logging_example src/logging_example.cpp)
 ament_target_dependencies(logging_example rclcpp std_msgs)
 
+add_executable(two_node_popline src/two_node_popline.cpp)
+ament_target_dependencies(two_node_popline rclcpp std_msgs)
+
+add_executable(cyclic_pipline src/cyclic_pipline.cpp)
+ament_target_dependencies(cyclic_pipline rclcpp std_msgs)
+
+add_executable(image_pipline_all_in_one src/image_pipline_all_in_one.cpp)
+target_link_libraries(image_pipline_all_in_one ${OpenCV_LIBS})  # OpenCV 라이브러리 추가
+ament_target_dependencies(image_pipline_all_in_one rclcpp std_msgs sensor_msgs)  # sensor_msgs 추가
+
 # Install targets
 install(TARGETS
   hello_pub
@@ -78,6 +88,9 @@ install(TARGETS
   action_server
   action_client
   logging_example
+  two_node_popline
+  cyclic_pipline
+  image_pipline_all_in_one
   DESTINATION lib/${PROJECT_NAME})
 
 # Install launch files
@@ -86,8 +99,6 @@ install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})
 # Testing
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
-  set(ament_cmake_copyright_FOUND TRUE)
-  set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
 
