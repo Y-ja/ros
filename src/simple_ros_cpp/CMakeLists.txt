@@ -17,7 +17,30 @@ find_package(std_srvs REQUIRED)
 find_package(user_interface REQUIRED)
 find_package(rcl_interfaces REQUIRED)
 find_package(rclcpp_action REQUIRED)
-find_package(sensor_msgs REQUIRED)  # sensor_msgs 추가
+find_package(sensor_msgs REQUIRED)
+find_package(rclcpp_components REQUIRED)
+find_package(rcutils REQUIRED)
+
+# Talker component
+add_library(talker_component SHARED src/talker_component.cpp)
+target_compile_definitions(talker_component PRIVATE "COMPOSITION_BUILDING_DLL")
+ament_target_dependencies(talker_component rclcpp std_msgs rclcpp_components)
+rclcpp_components_register_nodes(talker_component "composition::Talker")
+
+# Listener component
+add_library(listener_component SHARED src/listener_component.cpp)  # 수정: src/listener_component.cpp로 변경
+target_compile_definitions(listener_component PRIVATE "COMPOSITION_BUILDING_DLL")
+ament_target_dependencies(listener_component rclcpp std_msgs rclcpp_components)
+rclcpp_components_register_nodes(listener_component "composition::Listener")
+
+# Install targets
+install(TARGETS
+  talker_component
+  listener_component
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
 
 # Include directories
 include_directories(include)
@@ -70,8 +93,8 @@ add_executable(cyclic_pipline src/cyclic_pipline.cpp)
 ament_target_dependencies(cyclic_pipline rclcpp std_msgs)
 
 add_executable(image_pipline_all_in_one src/image_pipline_all_in_one.cpp)
-target_link_libraries(image_pipline_all_in_one ${OpenCV_LIBS})  # OpenCV 라이브러리 추가
-ament_target_dependencies(image_pipline_all_in_one rclcpp std_msgs sensor_msgs)  # sensor_msgs 추가
+target_link_libraries(image_pipline_all_in_one ${OpenCV_LIBS})
+ament_target_dependencies(image_pipline_all_in_one rclcpp std_msgs sensor_msgs)
 
 # Install targets
 install(TARGETS
@@ -91,7 +114,8 @@ install(TARGETS
   two_node_popline
   cyclic_pipline
   image_pipline_all_in_one
-  DESTINATION lib/${PROJECT_NAME})
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 # Install launch files
 install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})
