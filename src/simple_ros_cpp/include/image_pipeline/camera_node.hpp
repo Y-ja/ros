@@ -20,7 +20,6 @@
 #include <string>
 #include <thread>
 #include <utility>
-#include <atomic>
 
 #include "opencv2/highgui/highgui.hpp"
 #include "rclcpp/rclcpp.hpp"
@@ -28,8 +27,9 @@
 
 #include "common.hpp"
 
+/// Node which captures images from a camera using OpenCV and publishes them.
+/// Images are annotated with this process's id as well as the message's ptr.
 using namespace std::chrono_literals;
-
 class CameraNode final : public rclcpp::Node
 {
 public:
@@ -44,12 +44,12 @@ public:
         const std::string &output, const std::string &node_name = "camera_node",
         bool watermark = true, int device = 0, int width = 320, int height = 240)
         : Node(node_name, rclcpp::NodeOptions().use_intra_process_comms(true)),
-          canceled_(false), device_(device), width_(width), height_(height), watermark_(watermark) // 순서 수정
+          canceled_(false), watermark_(watermark), device_(device)
     {
         // Initialize OpenCV
         if (device_ == 99)
         {
-            cv::String folder = "/Desktop/opencv/opencv/cppOpen/build/data/";
+            cv::String folder = "/home/aa/aiot_2024_robot/OpenCV/cppTest/data/";
             cap_.open(folder + "vtest.avi");
             RCLCPP_INFO(get_logger(), "open video");
         }
@@ -122,12 +122,11 @@ private:
     rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr pub_;
     std::thread thread_;
     std::atomic<bool> canceled_;
-    
-    // 멤버 변수 순서 변경
-    int device_;
-    int width_;
-    int height_;
+
+    /// whether or not to add a watermark to the image showing process id and
+    /// pointer location
     bool watermark_;
+    int device_;
 
     cv::VideoCapture cap_;
     cv::Mat frame_;

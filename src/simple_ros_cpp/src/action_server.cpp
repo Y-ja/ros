@@ -26,49 +26,40 @@ private:
     typedef user_interface::action::Fibonacci Fibonacci;
     typedef rclcpp_action::ServerGoalHandle<Fibonacci> GoalHandleFibonacci;
     rclcpp_action::Server<Fibonacci>::SharedPtr _action_server;
-
     rclcpp_action::GoalResponse handle_goal(
         const rclcpp_action::GoalUUID &uuid,
         std::shared_ptr<const Fibonacci::Goal> goal)
     {
-        RCLCPP_INFO(get_logger(), "Requested step: %d", goal->step);
+        RCLCPP_INFO(get_logger(), "step : %ld", goal->step);
         (void)uuid;
         return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
     }
-
     rclcpp_action::CancelResponse handle_cancel(const std::shared_ptr<GoalHandleFibonacci> goal_handle)
     {
-        RCLCPP_INFO(get_logger(), "Canceling goal");
+        RCLCPP_INFO(get_logger(), "cancel goal");
         (void)goal_handle;
         return rclcpp_action::CancelResponse::ACCEPT;
     }
-
     void handle_accepted(const std::shared_ptr<GoalHandleFibonacci> goal_handle)
     {
-        std::thread{std::bind(&ActionServer::execute, this, goal_handle)}.detach();
+        std::thread(std::bind(&ActionServer::execute, this, _1), goal_handle).detach();
     }
-
     void execute(const std::shared_ptr<GoalHandleFibonacci> goal_handle)
     {
-        RCLCPP_INFO(get_logger(), "Executing goal");
+        rclcpp::Rate loop_rate(1);
         const auto goal = goal_handle->get_goal();
-
+        RCLCPP_INFO(get_logger(), "Executing goal %ld", goal->step);
         auto feedback = std::make_shared<Fibonacci::Feedback>();
         feedback->temp_seq.push_back(0);
-        if (goal->step > 0) {
-            feedback->temp_seq.push_back(1);
-        }
-
-        goal_handle->publish_feedback(feedback);
-
-        for (size_t i = 2; i < static_cast<size_t>(goal->step); ++i) {  // 수정된 부분
-            int next_number = feedback->temp_seq[i - 1] + feedback->temp_seq[i - 2];
-            feedback->temp_seq.push_back(next_number);
-            goal_handle->publish_feedback(feedback);
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-        }
-
+        feedback->temp_seq.push_back(1);
         auto result = std::make_shared<Fibonacci::Result>();
+
+        for (int i = 1; (i < goal->step); i++)
+        {
+            feedback->temp_seq.push_back(feedback->temp_seq[i] + feedback->temp_seq[i - 1]);
+            goal_handle->publish_feedback(feedback);
+            loop_rate.sleep();
+        }
         result->seq = feedback->temp_seq;
         goal_handle->succeed(result);
     }
