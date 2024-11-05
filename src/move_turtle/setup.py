@@ -22,6 +22,7 @@ setup(
         'console_scripts': [
             'move_cicle = move_turtle.move_cicle:main',
             'move_rect = move_turtle.move_rect:main',
+            'follow_wall = move_turtle.follow_wall:main',
         ],
     },
 )
