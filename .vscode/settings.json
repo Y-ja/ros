@@ -77,5 +77,39 @@
         "regex": "cpp",
         "valarray": "cpp"
     },
-    "C_Cpp.errorSquiggles": "disabled"
+    "C_Cpp.errorSquiggles": "disabled",
+    "python.autoComplete.extraPaths": [
+        "/home/test/Desktop/Ros2/ros2/ros/build/arith",
+        "/home/test/Desktop/Ros2/ros2/ros/install/arith/lib/python3.10/site-packages",
+        "/home/test/Desktop/Ros2/ros2/ros/install/rqt_example/local/lib/python3.10/dist-packages",
+        "/home/test/Desktop/Ros2/ros2/ros/build/ros2env",
+        "/home/test/Desktop/Ros2/ros2/ros/install/ros2env/lib/python3.10/site-packages",
+        "/home/test/Desktop/Ros2/ros2/ros/install/my_first_rqt_plugin_pkg/local/lib/python3.10/dist-packages",
+        "/home/test/Desktop/Ros2/ros2/ros/build/move_turtle",
+        "/home/test/Desktop/Ros2/ros2/ros/install/move_turtle/lib/python3.10/site-packages",
+        "/home/test/Desktop/Ros2/ros2/ros/install/user_interface/local/lib/python3.10/dist-packages",
+        "/home/test/Desktop/Ros2/ros2/ros/build/simple_ros",
+        "/home/test/Desktop/Ros2/ros2/ros/install/simple_ros/lib/python3.10/site-packages",
+        "/home/test/Desktop/Ros2/ros2/ros/build/my_package",
+        "/home/test/Desktop/Ros2/ros2/ros/install/my_package/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/test/Desktop/Ros2/ros2/ros/build/arith",
+        "/home/test/Desktop/Ros2/ros2/ros/install/arith/lib/python3.10/site-packages",
+        "/home/test/Desktop/Ros2/ros2/ros/install/rqt_example/local/lib/python3.10/dist-packages",
+        "/home/test/Desktop/Ros2/ros2/ros/build/ros2env",
+        "/home/test/Desktop/Ros2/ros2/ros/install/ros2env/lib/python3.10/site-packages",
+        "/home/test/Desktop/Ros2/ros2/ros/install/my_first_rqt_plugin_pkg/local/lib/python3.10/dist-packages",
+        "/home/test/Desktop/Ros2/ros2/ros/build/move_turtle",
+        "/home/test/Desktop/Ros2/ros2/ros/install/move_turtle/lib/python3.10/site-packages",
+        "/home/test/Desktop/Ros2/ros2/ros/install/user_interface/local/lib/python3.10/dist-packages",
+        "/home/test/Desktop/Ros2/ros2/ros/build/simple_ros",
+        "/home/test/Desktop/Ros2/ros2/ros/install/simple_ros/lib/python3.10/site-packages",
+        "/home/test/Desktop/Ros2/ros2/ros/build/my_package",
+        "/home/test/Desktop/Ros2/ros2/ros/install/my_package/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ]
 }
