@@ -11,11 +11,11 @@ class FramePublisher : public rclcpp::Node
 {
 public:
     explicit FramePublisher()
-        : Node("static_turtle_tf2_broadcaster")
+        : Node("static_turtle_tf2_broadcaster2")
     {
         _tf_bc = std::make_shared<tf2_ros::TransformBroadcaster>(this);
         _sub = create_subscription<turtlesim::msg::Pose>(
-            "turtle1/pose", 10,
+            "turtle2/pose", 10,
             std::bind(&FramePublisher::sub_callback, this, std::placeholders::_1));
     }
 
@@ -25,7 +25,7 @@ private:
         geometry_msgs::msg::TransformStamped t;
         t.header.stamp = get_clock()->now();
         t.header.frame_id = "world";
-        t.child_frame_id = "turtle1";
+        t.child_frame_id = "turtle2";
         t.transform.translation.x = msg->x;
         t.transform.translation.y = msg->y;
         t.transform.translation.z = 0.0;
