@@ -29,7 +29,9 @@ setup(
         'console_scripts': [
             "move_circle = move_turtle.move_circle:main",
             "move_rect = move_turtle.move_rect:main",
-            "follow_wall = move_turtle.follow_wall:main"
+            "follow_wall = move_turtle.follow_wall:main",
+            "follow_way_points = move_turtle.follow_way_points:main",
+            "follow_way_points_loop = move_turtle.follow_way_points_loop :main",
         ],
     },
 )

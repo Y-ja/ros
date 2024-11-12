@@ -43,7 +43,6 @@
   </link>
 
   <xacro:macro name="wheel" params="prefix suffix reflect">
-
     <link name="${prefix}_${suffix}_wheel">
       <visual>
         <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
@@ -66,7 +65,6 @@
       <child link="${prefix}_${suffix}_wheel"/>
       <origin xyz="${baselen*reflect/3} 0 -${wheeldiam/2+.05}" rpy="0 0 0"/>
     </joint>
-
   </xacro:macro>
 
   <xacro:macro name="leg" params="prefix reflect">
@@ -116,6 +114,7 @@
     <xacro:wheel prefix="${prefix}" suffix="front" reflect="1"/>
     <xacro:wheel prefix="${prefix}" suffix="back" reflect="-1"/>
   </xacro:macro>
+
   <xacro:leg prefix="right" reflect="-1" />
   <xacro:leg prefix="left" reflect="1" />
 
@@ -234,4 +233,33 @@
     <origin xyz="${.707*width+0.04} 0 ${.707*width}"/>
   </joint>
 
+  <link name="camera_link">
+    <visual>
+      <geometry>
+        <box size="0.01 0.03 0.03"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+  </link>
+
+  <joint name="camera_joint" type="fixed">
+    <parent link="box"/>
+    <child link="camera_link"/>
+    <origin xyz = "0 0 0.04" rpy="0 0 0"/>
+  </joint>
+
+  <gazebo reference="camera_link">
+    <material>
+      Gazebo/Red
+    </material>
+  </gazebo>
+
+  <joint name="camera_optical_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    <parent link="camera_link"/>
+    <child link="camera_link_optical"/>
+  </joint>
+
+  <link name="camera_link_optical"/>
+  
 </robot>
