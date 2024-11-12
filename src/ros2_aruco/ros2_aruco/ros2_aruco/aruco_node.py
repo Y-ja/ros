@@ -117,8 +117,9 @@ class ArucoNode(rclpy.node.Node):
 
         # Make sure we have a valid dictionary id:
         try:
-            dictionary_id = cv2.aruco.__getattribute__(dictionary_id_name)
-            if type(dictionary_id) != type(cv2.aruco.DICT_5X5_100):
+            # Use cv2.aruco.Dictionary to directly access the dictionary
+            dictionary_id = getattr(cv2.aruco, dictionary_id_name, None)
+            if dictionary_id is None:
                 raise AttributeError
         except AttributeError:
             self.get_logger().error(
@@ -145,8 +146,9 @@ class ArucoNode(rclpy.node.Node):
         self.intrinsic_mat = None
         self.distortion = None
 
-        self.aruco_dictionary = cv2.aruco.Dictionary_get(dictionary_id)
-        self.aruco_parameters = cv2.aruco.DetectorParameters_create()
+        # Initialize aruco dictionary
+        self.aruco_dictionary = cv2.aruco.getPredefinedDictionary(dictionary_id)
+        self.aruco_parameters = cv2.aruco.DetectorParameters()
         self.bridge = CvBridge()
 
     def info_callback(self, info_msg):

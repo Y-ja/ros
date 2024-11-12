@@ -525,4 +525,234 @@ ros2 run my_package security_node
 ### 🔗 호환성
 SROS2는 ROS2의 다양한 버전에서 지원되므로, 사용하는 ROS2 버전과의 호환성도 체크해야 합니다.
 
+## 🦾 TurtleBot3 카메라 설정 및 ARUCO 마커 관련 작업 📷
+
+### 1. 카메라 설정 🖼️
+#### 1. 터틀봇3 카메라 설정
+- TurtleBot3에 카메라를 설정하려면, Raspberry Pi에 연결된 카메라 모듈을 사용하고 ROS에서 이를 사용하기 위해 필요한 패키지와 런치 파일을 설정합니다. 🎥
+
+### 터틀봇3 런치 파일 작성
+
+- 터틀봇3의 카메라를 위한 런치 파일을 작성해야 합니다. 아래는 robot.launch.py와 raspicam.launch.py 파일을 생성하여 카메라를 구동할 수 있도록 설정하는 방법입니다.🔧 
+
+### ex: robot.launch.py
+
+```python
+import launch
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, LogInfo
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    return LaunchDescription([
+        DeclareLaunchArgument('camera', default_value='raspicam', description='Camera type'),
+        
+        Node(
+            package='raspicam_node',
+            executable='raspicam_node',
+            name='raspicam_node',
+            output='screen',
+            parameters=[{'camera_info_url': 'file:///home/ros/camera_info/camera.yaml'}],
+            remappings=[('/camera/image', '/raspicam/image_raw')],
+        ),
+    ])
+
+```
+
+### ex: raspicam.launch.py
+
+```python
+import launch
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    return LaunchDescription([
+        Node(
+            package='raspicam_node',
+            executable='raspicam_node',
+            name='raspicam_node',
+            output='screen',
+            parameters=[{'camera_info_url': 'file:///home/ros/camera_info/camera.yaml'}],
+        ),
+    ])
+
+```
+
+## Canny 노드 작성 (CompressedImage 토픽 구독) ⚙️
+
+- 카메라의 이미지를 Canny Edge Detection을 사용해 처리하는 노드를 작성할 수 있습니다. CompressedImage 토픽을 구독하여 이미지를 처리하는 예시 코드입니다. 🧠
+
+
+## Canny 노드 예시 (Python 코드)
+
+```python
+import rospy
+from sensor_msgs.msg import CompressedImage
+import cv2
+from cv_bridge import CvBridge
+
+class CannyEdgeNode:
+    def __init__(self):
+        self.bridge = CvBridge()
+        self.subscriber = rospy.Subscriber('/camera/image/compressed', CompressedImage, self.image_callback)
+    
+    def image_callback(self, msg):
+        # CompressedImage -> OpenCV Image로 변환
+        cv_image = self.bridge.compressed_imgmsg_to_cv2(msg, desired_encoding='passthrough')
+
+        # Canny Edge Detection
+        edges = cv2.Canny(cv_image, 100, 200)
+        
+        # Canny Edge 결과를 화면에 출력
+        cv2.imshow("Canny Edge Detection", edges)
+        cv2.waitKey(1)
+
+if __name__ == "__main__":
+    rospy.init_node('canny_edge_node')
+    node = CannyEdgeNode()
+    rospy.spin()
+
+```
+
+## URDF에 카메라 노드 추가 🛠️
+
+- TurtleBot3의 URDF 파일에 카메라를 추가하려면, 카메라의 위치를 설정하고 필요한 링크 및 조인트를 정의해야 합니다. 🚗
+
+
+## 카메라 추가 예시 (URDF)
+
+```xml
+<robot name="turtlebot3">
+    <link name="base_link">
+        <!-- 기존의 링크 정의 -->
+    </link>
+
+    <link name="camera_link">
+        <sensor type="camera" name="raspicam">
+            <origin xyz="0 0 0.2" rpy="0 0 0"/>
+            <camera>
+                <horizontal_fov value="1.396"/>
+                <image width="640" height="480" />
+            </camera>
+        </sensor>
+    </link>
+
+    <joint name="camera_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="camera_link"/>
+        <origin xyz="0 0 0.2" rpy="0 0 0"/>
+    </joint>
+</robot>
+
+```
+
+## Gazebo SDF 파일 수정 (기존의 turtlebot3_model.sdf 변경) 🌍
+
+- Gazebo에서 카메라를 시뮬레이션하려면 turtlebot3_model.sdf 파일을 수정해야 합니다. 이 파일에 카메라 센서를 추가하여 Gazebo에서 시뮬레이션할 수 있도록 설정합니다.
+
+
+## 카메라 SDF 추가 예시
+
+```xml
+<sdf version="1.6">
+  <model name="turtlebot3">
+    <!-- 기존 모델 요소들 -->
+
+    <link name="camera_link">
+      <sensor name="camera" type="camera">
+        <pose>0 0 0.1 0 0 0</pose>
+        <camera>
+          <horizontal_fov>1.396</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+          </image>
+        </camera>
+      </sensor>
+    </link>
+  </model>
+</sdf>
+
+```
+
+## ARUCO 마커 관련 작업 🔲
+
+### ARUCO 노드 패키지 다운로드 및 실행
+- ARUCO 마커를 인식하는 ROS 패키지를 설치하고 실행합니다. 🎯
+
+```bash
+sudo apt-get install ros-humble-aruco
+
+```
+### ARUCO 노드 실행
+
+```bash
+sudo apt-get install ros-humble-aruco
+
+```
+
+## ARUCO 마커 생성 📄
+- ARUCO 마커를 생성하려면 OpenCV의 aruco 모듈을 사용하여 이미지를 생성할 수 있습니다. 마커를 생성하는 Python 코드 예시입니다
+
+```python
+import cv2
+import cv2.aruco as aruco
+
+# ARUCO 사전 생성 (예: DICT_4X4_50)
+aruco_dict = aruco.Dictionary_get(aruco.DICT_4X4_50)
+parameters = aruco.DetectorParameters_create()
+
+# 마커 생성
+marker = aruco.drawMarker(aruco_dict, 0, 700)  # 0번 마커, 크기 700
+cv2.imwrite("aruco_marker.png", marker)
+
+```
+
+## 3. 추가 설정 ⚡
+### tf-transformations 패키지 설치
+
+```bash
+sudo apt-get install ros-humble-tf-transformations
+
+```
+
+## ARUCO 코드 수정 📝
+- ARUCO 마커 코드에서, 수정을 통해 TF 변환을 지원하거나 마커 인식을 위해 필요한 기능을 추가할 수 있습니다.
+
+
+## Numpy 버전 오류 해결 🔧
+
+- numpy 버전 문제로 인한 오류를 해결하기 위해 numpy를 버전 1.26으로 다운그레이드합니다.
+
+```bash
+pip install numpy==1.26
+
+```
+
+## ARUCO 런치 파일 작성 📂
+
+- ARUCO 마커 인식을 위한 런치 파일을 작성하여 마커를 인식할 수 있도록 합니다.
+
+
+### ex : aruco_detect.launch.py
+
+```python
+import launch
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    return LaunchDescription([
+        Node(
+            package='aruco_ros',
+            executable='aruco_detect',
+            name='aruco_detect',
+            output='screen',
+            parameters=[{'image_transport': 'compressed'}],
+        ),
+    ])
+
+```
 

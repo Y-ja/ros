@@ -32,6 +32,8 @@ setup(
             "follow_wall = move_turtle.follow_wall:main",
             "follow_way_points = move_turtle.follow_way_points:main",
             "follow_way_points_loop = move_turtle.follow_way_points_loop :main",
+            "follow_ar_marker = move_turtle.follow_ar_marker :main",
+            "led_server = move_turtle.led_server :main",
         ],
     },
 )
