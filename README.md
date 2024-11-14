@@ -756,3 +756,176 @@ def generate_launch_description():
 
 ```
 
+
+## 🖥️ 터틀봇3와 아두이노 연동: LED 제어 및 스위치 감지 시스템 🚀
+
+- 이 문서에서는 터틀봇3와 아두이노를 연결하여 LED를 제어하고, 스위치 상태를 감지하는 방법에 대해 설명합니다. 아두이노와 터틀봇3 간의 시리얼 통신을 통해 LED 제어와 스위치 상태 감지를 구현하는 코드와 ROS 노드를 작성합니다. 각 단계별로 아두이노 코드, ROS 노드, 스위치 제어 등을 설명합니다.
+
+
+## 1. LED 제어: 아두이노 코드 🖤
+### led.ino (아두이노 코드)
+
+- 이 코드에서는 아두이노의 디지털 핀을 사용하여 LED를 제어합니다. ROS에서 받은 명령에 따라 LED를 ON 또는 OFF로 변경합니다.
+
+## ✅ 예시코드
+```cpp
+// led.ino
+int ledPin = 13;  // LED가 연결된 핀 번호
+
+void setup() {
+  pinMode(ledPin, OUTPUT);  // LED 핀을 출력으로 설정
+  Serial.begin(9600);       // 시리얼 통신 시작
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    char command = Serial.read();  // ROS에서 보내는 명령을 읽음
+
+    if (command == '1') {
+      digitalWrite(ledPin, HIGH);  // LED 켜기
+    }
+    else if (command == '0') {
+      digitalWrite(ledPin, LOW);   // LED 끄기
+    }
+  }
+}
+
+```
+
+## 2. 아두이노와 ROS 통신을 위한 Python 노드 🐍
+### arduino_led.py (ROS Python 노드)
+
+- 아두이노와의 시리얼 통신을 관리하는 Python 노드를 작성합니다. 이 노드는 ROS에서 std_msgs/String 메시지를 구독하고, 수신한 메시지에 따라 아두이노에 LED ON/OFF 명령을 보냅니다.
+
+## ✅ 예시코드
+```python
+#!/usr/bin/env python
+import rospy
+import serial
+from std_msgs.msg import String
+
+# 아두이노와 시리얼 연결 설정 (포트와 보드 속도에 맞게 수정)
+arduino = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+
+def led_control_callback(msg):
+    # ROS에서 받은 메시지를 아두이노로 전송
+    command = msg.data
+    if command == "on":
+        arduino.write(b'1')  # LED 켜기
+    elif command == "off":
+        arduino.write(b'0')  # LED 끄기
+
+def listener():
+    # ROS 노드 초기화
+    rospy.init_node('arduino_led_control', anonymous=True)
+    
+    # 'led_control' 토픽을 구독하고, 메시지를 받으면 콜백 함수 호출
+    rospy.Subscriber('led_control', String, led_control_callback)
+    
+    rospy.spin()
+
+if __name__ == '__main__':
+    try:
+        listener()
+    except rospy.ROSInterruptException:
+        pass
+
+```
+
+## 3. 터틀봇3에 아두이노 연결 토픽 확인 🛸
+
+- 터틀봇3와 아두이노가 시리얼 통신을 통해 연결된 후, 터틀봇3에서 아두이노에 명령을 전송할 수 있습니다. ROS에서 roscore와 roslaunch를 실행하여 아두이노와의 연결을 확인하고 통신 상태를 테스트합니다.
+
+## ✅ 예시 명령어
+```bash
+roscore  # ROS 마스터 시작
+roslaunch turtlebot3_bringup robot.launch  # 터틀봇3 로봇 시작
+
+```
+- 터틀봇3가 실행되면 led_control 토픽을 통해 아두이노로 명령을 보낼 수 있습니다.
+
+
+## 4. 스위치 제어: 아두이노 코드 🔲
+
+- 스위치의 상태를 감지하여 falling edge (내려가는 신호)와 rising edge (올라가는 신호)를 처리하는 아두이노 코드를 작성합니다.
+
+## ✅ 예시코드
+```cpp
+// switch.ino
+int switchPin = 2;   // 스위치가 연결된 핀
+int lastState = HIGH;  // 마지막 상태 (HIGH 또는 LOW)
+int currentState = HIGH;  // 현재 스위치 상태
+
+void setup() {
+  pinMode(switchPin, INPUT);  // 스위치 핀을 입력으로 설정
+  Serial.begin(9600);         // 시리얼 통신 시작
+}
+
+void loop() {
+  currentState = digitalRead(switchPin);  // 스위치 상태 읽기
+
+  // Falling edge (스위치에서 LOW로 변경될 때)
+  if (lastState == HIGH && currentState == LOW) {
+    Serial.println("Falling edge detected!");
+  }
+  // Rising edge (스위치에서 HIGH로 변경될 때)
+  else if (lastState == LOW && currentState == HIGH) {
+    Serial.println("Rising edge detected!");
+  }
+
+  lastState = currentState;  // 마지막 상태 업데이트
+}
+
+```
+
+## 5. 스위치 제어: Arduino Switch ROS 노드 🚦
+
+- 아두이노의 스위치 상태를 ROS 토픽을 통해 처리하는 Python 노드를 작성합니다. 이 노드는 arduino_switch라는 토픽을 구독하고, 스위치 상태에 따라 falling edge 또는 rising edge 이벤트를 처리합니다.
+
+## ✅ 예시코드
+```python
+#!/usr/bin/env python
+import rospy
+import serial
+from std_msgs.msg import String
+
+# 아두이노와 시리얼 연결 설정
+arduino = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+
+def switch_state_listener():
+    # ROS 노드 초기화
+    rospy.init_node('arduino_switch_listener', anonymous=True)
+    
+    # 'arduino_switch' 토픽에 메시지를 발행
+    pub = rospy.Publisher('arduino_switch', String, queue_size=10)
+    
+    rate = rospy.Rate(10)  # 10Hz로 반복
+
+    while not rospy.is_shutdown():
+        if arduino.in_waiting > 0:
+            message = arduino.readline().decode('utf-8').strip()
+            rospy.loginfo("Received: %s", message)
+            pub.publish(message)
+        
+        rate.sleep()
+
+if __name__ == '__main__':
+    try:
+        switch_state_listener()
+    except rospy.ROSInterruptException:
+        pass
+
+```
+
+## 6. 전체 시스템 연결 및 테스트 🔗
+
+1. 아두이노 코드 및 Python 노드가 모두 준비되었으면, roslaunch로 ROS 시스템을 시작합니다.
+
+2. 아두이노와 ROS 간의 시리얼 연결을 확인한 후, led_control 토픽에 메시지를 보내 LED를 제어하거나, arduino_switch 토픽을 통해 스위치 상태를 실시간으로 확인합니다.
+
+## ✅ 예시 명령어
+```bash
+roslaunch your_package_name start_led_control.launch
+
+```
+- 스위치가 작동하면 "Falling edge detected!" 또는 "Rising edge detected!" 메시지가 ROS에서 출력됩니다. LED를 제어하고 싶으면, 터미널에서 rostopic pub 명령어를 사용하여 led_control 토픽에 메시지를 전송할 수 있습니다.

@@ -9,7 +9,7 @@ class Arduino_led(Node):
         super().__init__("Arduino_led")
         # self.qos_profile = qos_profile_sensor_data
         self.create_subscription(String, "led", self.sub_callback, self.qos_profile)
-        self.ser = serial.Serial('/dev.ttyUSB0' , 115200)
+        self.ser = serial.Serial('/dev/tyUSB0' , 115200)
 
     def sub_callback(self, msg: String):
         

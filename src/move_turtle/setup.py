@@ -32,11 +32,12 @@ setup(
             "follow_wall = move_turtle.follow_wall:main",
             "follow_way_points = move_turtle.follow_way_points:main",
             "follow_way_points_loop = move_turtle.follow_way_points_loop :main",
-            "follow_ar_marker = move_turtle.follow_ar_marker :main",
+            "followscarker = move_turtle.follow_ar_marker :main",
             "led_server = move_turtle.led_server:main",
             "servo_server = move_turtle.servo_server:main",
             "servo_sub = move_turtle.servo_sub:main",
             "arduino_led = move_turtle.arduino_led:main",
+            "arduino_switch = move_turtle.arduino_switch:main",
         ],
     },
 )
