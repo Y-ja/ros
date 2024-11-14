@@ -75,7 +75,8 @@
         "variant": "cpp",
         "any": "cpp",
         "regex": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "*.ipp": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled",
     "python.autoComplete.extraPaths": [

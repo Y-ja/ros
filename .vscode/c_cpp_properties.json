@@ -16,6 +16,7 @@
                 "/home/test/Desktop/Ros2/ros2/ros/install/**",
                 "/opt/ros/humble/include/rcl_interfaces",
                 "/opt/ros/humble/include/rclcpp_action"
+               
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
