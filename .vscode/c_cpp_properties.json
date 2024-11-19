@@ -24,8 +24,7 @@
             "forcedInclude": [],
             "cStandard": "c17",
             "cppStandard": "gnu++17",
-            "defines": [],
-            "compileCommands": "${workspaceFolder}/build/compile_commands.json"
+            "defines": []
         },
         {
             "name": "Arduino",
@@ -44,6 +43,7 @@
             "includePath": [
                 "/home/test/.arduino15/packages/arduino/hardware/avr/1.8.6/cores/arduino",
                 "/home/test/.arduino15/packages/arduino/hardware/avr/1.8.6/variants/standard",
+                "/home/test/Arduino/libraries/Servo/src",
                 "/home/test/.arduino15/packages/arduino/tools/avr-gcc/7.3.0-atmel3.6.1-arduino7/lib/gcc/avr/7.3.0/include",
                 "/home/test/.arduino15/packages/arduino/tools/avr-gcc/7.3.0-atmel3.6.1-arduino7/lib/gcc/avr/7.3.0/include-fixed",
                 "/home/test/.arduino15/packages/arduino/tools/avr-gcc/7.3.0-atmel3.6.1-arduino7/avr/include"
