@@ -929,3 +929,146 @@ roslaunch your_package_name start_led_control.launch
 
 ```
 - 스위치가 작동하면 "Falling edge detected!" 또는 "Rising edge detected!" 메시지가 ROS에서 출력됩니다. LED를 제어하고 싶으면, 터미널에서 rostopic pub 명령어를 사용하여 led_control 토픽에 메시지를 전송할 수 있습니다.
+
+
+## MoveIt 2 설치 가이드 🚀
+
+- 이 가이드는 MoveIt 2를 ROS 2 Humble 환경에서 설치하고 설정하는 방법을 설명합니다. MoveIt 2는 로봇 조작 및 모션 플래닝을 위한 강력한 프레임워크로, 다양한 로봇 작업을 수행할 수 있게 해줍니다. 🤖
+
+## 1. ROS 2 의존성 설치 🐍
+
+- 먼저 ROS 2에서 필요로 하는 몇 가지 의존성 패키지를 설치합니다:
+
+```bash
+
+sudo apt update
+sudo apt install python3-rosdep
+sudo rosdep init
+rosdep update
+
+```
+
+## 2. 시스템 업데이트 🔄
+
+- 시스템을 최신 상태로 업데이트합니다.
+
+```bash
+
+sudo apt update
+sudo apt dist-upgrade
+
+```
+
+## 3. colcon 및 필수 확장 프로그램 설치 🔧
+
+- ROS 2 패키지를 빌드하기 위해 colcon 빌드 툴과 필수 확장 프로그램을 설치합니다.
+
+```bash
+
+sudo apt install python3-colcon-common-extensions
+sudo apt install python3-colcon-mixin
+
+```
+
+- 기본 믹스인 레포지토리를 colcon에 추가합니다.
+
+```bash
+
+colcon mixin add default https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml
+colcon mixin update default
+
+```
+
+## 4. vcstool 설치 🛠️
+
+- vcstool은 ROS 2 리포지토리를 관리하는 유틸리티입니다. 설치해 주세요:
+
+```bash
+
+sudo apt install python3-vcstool
+
+```
+
+## 5. 작업 공간 설정 🌱
+
+- 새로운 ROS 2 작업 공간을 생성합니다.
+
+```bash
+
+mkdir -p ~/ws_moveit/src
+cd ~/ws_moveit/src
+
+```
+
+## 6. MoveIt 2 튜토리얼 클론 🔄
+
+- humble 브랜치에서 MoveIt 2 튜토리얼 리포지토리를 클론합니다:
+
+```bash
+
+git clone -b humble https://github.com/moveit/moveit2_tutorials
+
+```
+- 필요한 모든 리포지토리를 가져옵니다.
+
+```bash
+
+vcs import --recursive < moveit2_tutorials/moveit2_tutorials.repos
+
+```
+
+## 7. 기존 MoveIt 패키지 제거 ❌
+
+- 기존에 설치된 MoveIt 패키지가 있다면 제거합니다.
+
+```bash
+
+sudo apt remove ros-humble-moveit*
+
+```
+
+## 8. MoveIt 2 의존성 설치 🔑
+
+- MoveIt 2에 필요한 모든 의존성 패키지를 설치합니다.
+
+```bash
+
+sudo apt update
+rosdep install -r --from-paths . --ignore-src --rosdistro humble -y
+
+```
+
+## 9. 작업 공간 빌드 🏗️
+
+- colcon을 사용하여 작업 공간을 빌드합니다.
+
+```bash
+
+cd ~/ws_moveit
+colcon build --mixin release
+
+```
+
+## 10. 작업 공간 소스 설정 🎉
+
+- 빌드가 완료되면, 작업 공간을 소스하여 환경을 업데이트합니다.
+```bash
+
+source ~/ws_moveit/install/setup.bash
+
+
+```
+- 설치가 제대로 되었는지 확인하려면 MoveIt 2 튜토리얼 노드를 실행해보세요
+
+```bash
+ros2 run moveit2_tutorials demo
+```
+
+## 문제 해결 ⚠️
+
+1. 빌드 중 문제가 발생하면 빌드 로그를 확인하여 누락된 의존성이나 오류를 찾아보세요.
+2. 시스템 리소스가 부족할 수 있으니 충분한 디스크 공간과 메모리를 확보하세요.
+3. 의존성 문제 발생 시 rosdep update 및 rosdep install을 다시 실행해보세요.
+
+
+
