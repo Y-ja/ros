@@ -40,6 +40,8 @@ setup(
             "arduino_switch = move_turtle.arduino_switch:main",
             "arduino_servo = move_turtle.arduino_servo:main",
             "patrol_maipulator = move_turtle.patrol_maipulator:main",
+            "arduino_lcd = move_turtle.arduino_lcd:main",
+            "lcd_gpio = move_turtle.lcd_gpio:main",
         ],
     },
 )

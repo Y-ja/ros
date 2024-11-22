@@ -1,0 +1,6 @@
+# Request (Input)
+string data  # The data to display on the LCD
+
+---
+# Response (Output)
+bool success  # Whether the operation was successful or not
